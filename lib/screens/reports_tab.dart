@@ -1,146 +1,157 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:file_picker/file_picker.dart';
 
-class ReportsTab extends StatelessWidget {
+class ReportsTab extends StatefulWidget {
   const ReportsTab({Key? key}) : super(key: key);
 
   @override
+  _ReportsTabState createState() => _ReportsTabState();
+}
+
+class _ReportsTabState extends State<ReportsTab> with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+  final Map<String, List<FlSpot>> _dataSets = {
+    'Weekly': List.generate(7, (i) => FlSpot(i.toDouble(), (i + 1) * 2.0)),
+    'Monthly': List.generate(30, (i) => FlSpot(i.toDouble(), ((i % 7) + 1) * 1.5)),
+    'Annual': List.generate(12, (i) => FlSpot(i.toDouble(), (i + 2) * 3.0)),
+  };
+  bool _uploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
+  Future<void> _pickAndUpload() async {
+    setState(() => _uploading = true);
+    final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'jpg', 'png']);
+    await Future.delayed(const Duration(seconds: 1)); // simulate upload
+    if (result != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Uploaded: ${result.files.single.name}')),
+      );
+    }
+    setState(() => _uploading = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Reports'),
+        backgroundColor: const Color(0xFF8A3FFC),
+      ),
+      body: Column(
         children: [
-          const Text(
-            "Your Health Overview",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF2B0A3D),
+          Container(
+            color: Colors.white,
+            child: TabBar(
+              controller: _tabController,
+              labelColor: const Color(0xFF8A3FFC),
+              unselectedLabelColor: Colors.grey,
+              indicator: UnderlineTabIndicator(
+                borderSide: BorderSide(width: 4.0, color: const Color(0xFF8A3FFC)),
+                insets: const EdgeInsets.symmetric(horizontal: 24.0),
+              ),
+              tabs: const [Tab(text: 'Weekly'), Tab(text: 'Monthly'), Tab(text: 'Annual')],
             ),
           ),
-          const SizedBox(height: 20),
-          _buildHealthMetrics(),
-
-          const SizedBox(height: 40),
-          const Text(
-            "Safety Reports",
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF2B0A3D),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: _dataSets.keys.map((period) => _buildPeriodView(period)).toList(),
             ),
           ),
-          const SizedBox(height: 20),
-          _buildSafetyReports(),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _pickAndUpload,
+        backgroundColor: const Color(0xFF8A3FFC),
+        child: _uploading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : const Icon(Icons.upload_file),
       ),
     );
   }
 
-  Widget _buildHealthMetrics() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildMetricCard("Steps", "5,200", Icons.directions_walk),
-        _buildMetricCard("Calories", "320", Icons.local_fire_department),
-        _buildMetricCard("Sleep", "7.2h", Icons.nights_stay),
-      ],
-    );
-  }
-
-  Widget _buildMetricCard(String title, String value, IconData icon) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 6),
+  Widget _buildPeriodView(String period) {
+    final spots = _dataSets[period]!;
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 500),
+      child: ListView(
+        key: ValueKey(period),
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 8,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 36, color: Color(0xFF8A3FFC)),
-            const SizedBox(height: 12),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF2B0A3D),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSafetyReports() {
-    return Column(
-      children: [
-        _buildSafetyCard("SOS Activated", "2 times", Icons.warning_amber_rounded),
-        const SizedBox(height: 16),
-        _buildSafetyCard("Safe Location Alerts", "5 alerts", Icons.location_on),
-      ],
-    );
-  }
-
-  Widget _buildSafetyCard(String title, String value, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 8,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      child: Row(
         children: [
-          Icon(icon, size: 36, color: Color(0xFF8A3FFC)),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2B0A3D),
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                ),
-              ),
-            ],
-          )
+          _buildChartCard(period, spots),
+          const SizedBox(height: 24),
+          _buildSectionTitle('$period Summary'),
+          _buildSummaryItem('Avg Heart Rate', '76 bpm'),
+          _buildSummaryItem('Avg Steps', '5,200'),
+          _buildSummaryItem('Mood Swings', '3 events'),
+          _buildSummaryItem('Pain Days', '2 days'),
         ],
       ),
     );
+  }
+
+  Widget _buildChartCard(String period, List<FlSpot> spots) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('$period Vitals', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF2B0A3D))),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 200,
+              child: LineChart(
+                LineChartData(
+                  borderData: FlBorderData(show: false),
+                  gridData: FlGridData(show: true, drawVerticalLine: false),
+                  titlesData: FlTitlesData(show: false),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: true,
+                      barWidth: 3,
+                      color: const Color(0xFF8A3FFC),
+                      dotData: FlDotData(show: true),
+                      belowBarData: BarAreaData(show: true, color: const Color(0xFF8A3FFC).withOpacity(0.2)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF2B0A3D))),
+    );
+  }
+
+  Widget _buildSummaryItem(String title, String value) {
+    return ListTile(
+      leading: const Icon(Icons.check_circle_outline, color: Color(0xFF8A3FFC)),
+      title: Text(title),
+      trailing: Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }

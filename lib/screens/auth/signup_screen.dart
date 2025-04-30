@@ -177,7 +177,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           // TODO: Sign Up logic
-                          Navigator.pushReplacementNamed(context, '/home');
+                          Navigator.pushReplacementNamed(context, '/onboardingProfile');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF8A3FFC),

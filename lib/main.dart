@@ -3,8 +3,8 @@ import 'package:herpulse532/screens/auth/login_screen.dart';
 import 'package:herpulse532/screens/auth/signup_screen.dart';
 import 'package:herpulse532/screens/onboarding_screen.dart';
 import 'package:herpulse532/screens/home_screen.dart';
-
 import 'screens/splash_screen.dart';
+import 'screens/user_profile_onboarding.dart';
 import 'screens/welcome_screen.dart';
 void main() {
   runApp(const MyApp());
@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/welcome': (context) => const WelcomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignupScreen(),
+        '/onboardingProfile': (_) => UserProfileOnboarding(),
         '/home': (context) => const HomeScreen(),
 
       },// Starting page is SplashScreen

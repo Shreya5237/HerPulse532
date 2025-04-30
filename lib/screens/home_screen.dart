@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
       const ReportsTab(),
       const InsightsTab(),
       const SafetyTab(),
-      const ProfileTab(),
+      ProfileTab(),
     ];
   }
 

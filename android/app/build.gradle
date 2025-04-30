@@ -6,6 +6,7 @@ plugins {
 }
 
 android {
+    compileSdk = 35
     namespace = "com.example.herpulse532"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
