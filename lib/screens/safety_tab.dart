@@ -1,178 +1,133 @@
 import 'package:flutter/material.dart';
 
-class SafetyTab extends StatefulWidget {
+class SafetyTab extends StatelessWidget {
   const SafetyTab({Key? key}) : super(key: key);
 
   @override
-  _SafetyTabState createState() => _SafetyTabState();
-}
-
-class _SafetyTabState extends State<SafetyTab> {
-  final List<Contact> _contacts = [
-    Contact(name: 'Mom', number: '+91 9876543210'),
-    Contact(name: 'Best Friend', number: '+91 9876543211'),
-  ];
-
-  bool get isPregnant => true; // Placeholder: fetch from user profile
-
-  void _showAddContactDialog({bool hospital = false}) {
-    final nameController = TextEditingController();
-    final numberController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(hospital ? 'Add Hospital Number' : 'Add Emergency Contact'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
-            ),
-            TextField(
-              controller: numberController,
-              keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(labelText: 'Phone Number'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final name = nameController.text.trim();
-              final number = numberController.text.trim();
-              if (name.isNotEmpty && number.isNotEmpty) {
-                setState(() => _contacts.add(Contact(name: name, number: number)));
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('Add'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF8A3FFC), Color(0xFFFF5CA8)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              const SizedBox(height: 16),
-              // SOS Button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.warning_amber_rounded, size: 28, color: Colors.white),
-                  label: const Text('Send SOS Alert', style: TextStyle(fontSize: 18, color: Colors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2D0A50),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    elevation: 8,
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: const Text('SOS Alert Sent 🚨'),
-                        content: const Text('Your emergency contacts have been notified.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+      backgroundColor: const Color(0xFFF9F9FF),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // SOS Alert Card
+            Card(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-
-              const SizedBox(height: 24),
-              // Contacts List Header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              elevation: 6,
+              color: Colors.red.shade400,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text('Emergency Contacts', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white)),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle, color: Colors.white, size: 28),
-                      onPressed: () => _showAddContactDialog(),
+                    const Icon(Icons.warning_amber_rounded, color: Colors.white, size: 36),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Send SOS Alert",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.red.shade400,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 0,
+                        ),
+                        icon: const Icon(Icons.send),
+                        label: const Text("Alert Emergency Contacts"),
+                        onPressed: () {
+                          // Implement SOS action
+                        },
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Expanded(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+
+            // Emergency Contact Info Card
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Emergency Contact Numbers",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _contacts.length + (isPregnant ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (isPregnant && index == _contacts.length) {
-                        return Card(
-                          color: const Color(0xFFFCE4EC),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          child: ListTile(
-                            leading: const Icon(Icons.local_hospital, color: Color(0xFF8A3FFC)),
-                            title: const Text('Hospital / Clinic'),
-                            subtitle: const Text('Add hospital number'),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.add, color: Color(0xFF8A3FFC)),
-                              onPressed: () => _showAddContactDialog(hospital: true),
-                            ),
-                          ),
-                        );
-                      }
-                      final contact = _contacts[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 3,
-                        child: ListTile(
-                          leading: const Icon(Icons.phone, color: Color(0xFF8A3FFC)),
-                          title: Text(contact.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                          subtitle: Text(contact.number),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.redAccent),
-                            onPressed: () => setState(() => _contacts.removeAt(index)),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                  const SizedBox(height: 12),
+                  _buildContactTile("Primary Contact", "9876543210"),
+                  const SizedBox(height: 10),
+                  _buildContactTile("Secondary Contact", "1234567890"),
+                  const SizedBox(height: 10),
+                  _buildContactTile("Hospital (if pregnant)", "0123456789"),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContactTile(String label, String number) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                number,
+                style: const TextStyle(fontSize: 15, color: Colors.black54),
               ),
             ],
           ),
-        ),
+          IconButton(
+            icon: const Icon(Icons.phone, color: Colors.green),
+            onPressed: () {
+              // Implement call functionality
+            },
+          )
+        ],
       ),
     );
   }
 }
 
-class Contact {
-  final String name;
-  final String number;
-  Contact({required this.name, required this.number});
-}

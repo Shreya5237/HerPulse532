@@ -29,7 +29,7 @@ class _ProfileTabState extends State<ProfileTab> {
               height: 200,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/logo_background.png'),
+                  image: AssetImage('assets/images/logo_background11.png'),
                   fit: BoxFit.cover,
                 ),
                 borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),

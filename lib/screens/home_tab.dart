@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
-import 'package:herpulse532/screens/cycle_screen.dart'; // add CycleScreen import
+import 'package:herpulse532/screens/cycle_tracker/cycle_tracking_page.dart';
+
+
 
 class HomeTab extends StatelessWidget {
   final VoidCallback? onViewReportsTap;
-  const HomeTab({Key? key, this.onViewReportsTap}) : super(key: key);
+  const HomeTab({super.key, this.onViewReportsTap});
 
   @override
   Widget build(BuildContext context) {
@@ -213,10 +215,7 @@ class HomeTab extends StatelessWidget {
                 'Track Cycle',
                 Icons.timeline,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CycleScreen()),
-                  );
+                  Navigator.of(context).pushNamed('/cycleTracker');
                 },
               ),
               _buildQuickActionTile(context, 'View Tips', Icons.info),

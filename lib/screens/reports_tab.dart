@@ -3,9 +3,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:file_picker/file_picker.dart';
 
 class ReportsTab extends StatefulWidget {
-  const ReportsTab({Key? key}) : super(key: key);
+  const ReportsTab({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ReportsTabState createState() => _ReportsTabState();
 }
 
@@ -29,6 +30,7 @@ class _ReportsTabState extends State<ReportsTab> with SingleTickerProviderStateM
     final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'jpg', 'png']);
     await Future.delayed(const Duration(seconds: 1)); // simulate upload
     if (result != null) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Uploaded: ${result.files.single.name}')),
       );
@@ -38,7 +40,7 @@ class _ReportsTabState extends State<ReportsTab> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reports'),
@@ -52,9 +54,9 @@ class _ReportsTabState extends State<ReportsTab> with SingleTickerProviderStateM
               controller: _tabController,
               labelColor: const Color(0xFF8A3FFC),
               unselectedLabelColor: Colors.grey,
-              indicator: UnderlineTabIndicator(
-                borderSide: BorderSide(width: 4.0, color: const Color(0xFF8A3FFC)),
-                insets: const EdgeInsets.symmetric(horizontal: 24.0),
+              indicator: const UnderlineTabIndicator(
+                borderSide: BorderSide(width: 4.0, color: Color(0xFF8A3FFC)),
+                insets: EdgeInsets.symmetric(horizontal: 24.0),
               ),
               tabs: const [Tab(text: 'Weekly'), Tab(text: 'Monthly'), Tab(text: 'Annual')],
             ),
@@ -113,15 +115,15 @@ class _ReportsTabState extends State<ReportsTab> with SingleTickerProviderStateM
               child: LineChart(
                 LineChartData(
                   borderData: FlBorderData(show: false),
-                  gridData: FlGridData(show: true, drawVerticalLine: false),
-                  titlesData: FlTitlesData(show: false),
+                  gridData: const FlGridData(show: true, drawVerticalLine: false),
+                  titlesData: const FlTitlesData(show: false),
                   lineBarsData: [
                     LineChartBarData(
                       spots: spots,
                       isCurved: true,
                       barWidth: 3,
                       color: const Color(0xFF8A3FFC),
-                      dotData: FlDotData(show: true),
+                      dotData: const FlDotData(show: true),
                       belowBarData: BarAreaData(show: true, color: const Color(0xFF8A3FFC).withOpacity(0.2)),
                     ),
                   ],
